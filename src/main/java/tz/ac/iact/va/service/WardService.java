@@ -6,7 +6,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import tz.ac.iact.va.exception.DataNotFoundException;
 import tz.ac.iact.va.model.CountResult;
+import tz.ac.iact.va.model.District;
+import tz.ac.iact.va.model.Region;
 import tz.ac.iact.va.model.Ward;
+import tz.ac.iact.va.repository.DistrictRepository;
 import tz.ac.iact.va.repository.WardRepository;
 
 import java.util.List;
@@ -16,8 +19,11 @@ public class WardService {
 
     private final WardRepository repository;
 
-    public WardService(WardRepository repository) {
+    private final DistrictRepository districtRepository;
+
+    public WardService(WardRepository repository, DistrictRepository districtRepository) {
         this.repository = repository;
+        this.districtRepository = districtRepository;
     }
 
 
@@ -38,9 +44,19 @@ public class WardService {
     }
 
 
+    public Ward findById(String id){
+        return repository.findById(id).orElseThrow(() -> new DataNotFoundException("Ward not found"));
+    }
+
 
 
     public Ward create(Ward ward) {
+
+        //Check if region provided exists
+        District district=districtRepository.findById(ward.getDistrict().getId()).orElseThrow(() -> new DataNotFoundException("District not found"));
+
+        ward.setDistrict(district);
+
         return repository.save(ward);
     }
 
@@ -48,6 +64,11 @@ public class WardService {
 
 //        Find the ward with the given ID
         Ward ward = repository.findById(id).orElseThrow(() -> new DataNotFoundException("Ward not found"));
+
+        //Check if region provided exists
+        District district=districtRepository.findById(updatedWard.getDistrict().getId()).orElseThrow(() -> new DataNotFoundException("District not found"));
+
+        ward.setDistrict(district);
 
         ward.setName(updatedWard.getName());
 

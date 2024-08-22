@@ -13,10 +13,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import tz.ac.iact.va.dto.MessageDTO;
-import tz.ac.iact.va.dto.ward.CreateWardDTO;
-import tz.ac.iact.va.dto.ward.CreatedWardDTO;
-import tz.ac.iact.va.dto.ward.ListWardDTO;
-import tz.ac.iact.va.dto.ward.UpdateWardDTO;
+import tz.ac.iact.va.dto.region.DetailRegionDTO;
+import tz.ac.iact.va.dto.ward.*;
 import tz.ac.iact.va.model.Ward;
 import tz.ac.iact.va.service.WardService;
 
@@ -46,6 +44,16 @@ public class WardController {
 
         return service.findAll(searchText, pageable).map(ward -> modelMapper.map(ward, ListWardDTO.class));
 
+    }
+
+
+    @GetMapping("/{id}")
+    @Operation(summary = "Get Ward by ID", description = "")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ward fetched successfully"),
+    })
+    public DetailWardDTO findById(@PathVariable String id) {
+        return modelMapper.map(service.findById(id),DetailWardDTO.class);
     }
 
     @PostMapping

@@ -38,6 +38,10 @@ public class RegionService {
     }
 
 
+    public Region findById(String id){
+        return repository.findById(id).orElseThrow(() -> new DataNotFoundException("Region not found"));
+    }
+
 
     public Region create(Region region) {
         return repository.save(region);

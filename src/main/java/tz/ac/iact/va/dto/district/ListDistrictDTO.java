@@ -15,5 +15,4 @@ public class ListDistrictDTO {
 
     private String name;
 
-    private DetailRegionDTO region;
 }

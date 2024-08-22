@@ -14,10 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import tz.ac.iact.va.dto.MessageDTO;
 import tz.ac.iact.va.dto.district.ListDistrictDTO;
-import tz.ac.iact.va.dto.region.CreateRegionDTO;
-import tz.ac.iact.va.dto.region.CreatedRegionDTO;
-import tz.ac.iact.va.dto.region.ListRegionDTO;
-import tz.ac.iact.va.dto.region.UpdateRegionDTO;
+import tz.ac.iact.va.dto.region.*;
 import tz.ac.iact.va.dto.ward.ListWardDTO;
 import tz.ac.iact.va.model.Region;
 import tz.ac.iact.va.service.DistrictService;
@@ -54,6 +51,14 @@ public class RegionController {
 
     }
 
+    @GetMapping("/{id}")
+    @Operation(summary = "Get Region by ID", description = "")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Region fetched successfully"),
+    })
+    public DetailRegionDTO findById(@PathVariable String id) {
+        return modelMapper.map(service.findById(id),DetailRegionDTO.class);
+    }
 
     @GetMapping("/{id}/districts")
     @Operation(summary = "Get all districts belong to region with ID", description = "")
