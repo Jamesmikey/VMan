@@ -1,6 +1,8 @@
-package tz.ac.iact.va.dto.notification;
+package tz.ac.iact.va.dto.region;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,20 +14,9 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreatedNotificationDTO {
+public class CreateRegionDTO {
 
-    private String id;
-
+    @NotEmpty(message = "Must specify the name")
     private String name;
-
-    private Ward ward;
-
-    private Sex sex;
-
-    @JsonFormat(pattern="yyyy-MM-dd")
-    private LocalDate dob;
-
-    @JsonFormat(pattern="yyyy-MM-dd")
-    private LocalDate dod;
 
 }

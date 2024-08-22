@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.*;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
+import tz.ac.iact.va.enums.Sex;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -27,7 +28,8 @@ public class Notification {
     @DocumentReference(lazy = true)
     private Ward ward;
 
-    private String sex;
+    private Sex sex;
+
 
     private LocalDate dob;
 
