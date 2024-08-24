@@ -25,4 +25,6 @@ public class Ward {
     @DocumentReference(lazy = true)
     private District district;
 
+
+
 }

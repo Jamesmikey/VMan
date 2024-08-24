@@ -6,14 +6,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import tz.ac.iact.va.dto.ward.RefWardDTO;
 import tz.ac.iact.va.enums.Sex;
-import tz.ac.iact.va.model.Ward;
 
 import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreatedNotificationDTO {
+public class ListNotificationDTO {
 
     private String id;
 

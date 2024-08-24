@@ -20,7 +20,7 @@ import tz.ac.iact.va.service.WardService;
 
 
 @Tag(name = "Wards", description = "Manage Wards")
-@RequestMapping("/api/v1/wards")
+@RequestMapping("/api/v1/regions/{regionId}/districts/{districtId}")
 @RestController
 @SecurityRequirement(name = "Bearer Authentication")
 public class WardController {

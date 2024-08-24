@@ -13,10 +13,10 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(JwtAuthenticationException.class)
-    public ResponseEntity<ErrorResponse> handleJwtAuthenticationException(JwtAuthenticationException ex) {
-        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.UNAUTHORIZED.value(), ex.getMessage());
-        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+    @ExceptionHandler(value = Exception.class)
+    public ResponseEntity<ErrorResponse> handleJwtAuthenticationException(Exception ex) {
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 

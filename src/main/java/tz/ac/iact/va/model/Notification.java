@@ -30,20 +30,12 @@ public class Notification {
 
     private Sex sex;
 
-
     private LocalDate dob;
 
     private LocalDate dod;
 
     @DocumentReference(lazy = true)
     private User reportedBy;
-
-    @DocumentReference(lazy = true)
-    private User assignedTo;
-
-    @DocumentReference(lazy = true)
-    private User assignedBy;
-
 
     @CreatedDate
     private LocalDateTime createdAt;

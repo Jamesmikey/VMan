@@ -40,9 +40,6 @@ public class User implements UserDetails {
 
   private String district;
 
-  @DocumentReference(lazy = true)
-  private Ward ward;
-
   private String sex;
 
   private String email;

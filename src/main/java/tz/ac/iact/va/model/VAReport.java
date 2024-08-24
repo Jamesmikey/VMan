@@ -22,10 +22,7 @@ public class VAReport {
     private String id;
 
     @DocumentReference(lazy = true)
-    private Notification notification;
-
-    @DocumentReference(lazy = true)
-    private User interviewedBy;
+    private Interview interview;
 
     @CreatedDate
     private LocalDateTime createdAt;

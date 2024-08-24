@@ -22,7 +22,7 @@ import tz.ac.iact.va.service.WardService;
 
 
 @Tag(name = "Districts", description = "Manage Districts")
-@RequestMapping("/api/v1/districts")
+@RequestMapping("/api/v1/regions/{regionId}")
 @RestController
 @SecurityRequirement(name = "Bearer Authentication")
 public class DistrictController {
@@ -45,7 +45,7 @@ public class DistrictController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Districts fetched successfully"),
     })
-    public Page<ListDistrictDTO> findAll(@RequestParam(required = false, defaultValue = "") String searchText, @Parameter(hidden = true) Pageable pageable) {
+    public Page<ListDistrictDTO> findAll(@RequestParam(required = false, defaultValue = "") String searchText, @Parameter(hidden = true) Pageable pageable, @PathVariable String regionId) {
 
         return service.findAll(searchText, pageable).map(district -> modelMapper.map(district, ListDistrictDTO.class));
 
@@ -57,7 +57,7 @@ public class DistrictController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "District fetched successfully"),
     })
-    public DetailDistrictDTO findById(@PathVariable String id) {
+    public DetailDistrictDTO findById(@PathVariable String id, @PathVariable String regionId) {
         return modelMapper.map(service.findById(id),DetailDistrictDTO.class);
     }
 
@@ -67,7 +67,7 @@ public class DistrictController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Wards fetched successfully"),
     })
-    public Page<ListWardDTO> findAllWardsByDistrict(@PathVariable String id, @Parameter(hidden = true) Pageable pageable) {
+    public Page<ListWardDTO> findAllWardsByDistrict(@PathVariable String id, @Parameter(hidden = true) Pageable pageable, @PathVariable String regionId) {
 
         return wardService.findAllByDistrict(id,pageable).map(district -> modelMapper.map(district, ListWardDTO.class));
 
@@ -79,7 +79,7 @@ public class DistrictController {
             @ApiResponse(responseCode = "200", description = "District created successfully"),
             @ApiResponse(responseCode = "400", description = "District fields are not filled in correctly")
     })
-    public CreatedDistrictDTO create(@RequestBody @Valid CreateDistrictDTO createDistrictDTO) {
+    public CreatedDistrictDTO create(@RequestBody @Valid CreateDistrictDTO createDistrictDTO, @PathVariable String regionId) {
 
         District district = modelMapper.map(createDistrictDTO, District.class);
 
