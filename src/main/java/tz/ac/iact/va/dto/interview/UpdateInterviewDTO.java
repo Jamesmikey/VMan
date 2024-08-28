@@ -4,16 +4,14 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import tz.ac.iact.va.dto.interviewer.RefInterviewerDTO;
-import tz.ac.iact.va.dto.notification.RefNotificationDTO;
-import tz.ac.iact.va.dto.ward.RefWardDTO;
+import tz.ac.iact.va.dto.assignment.RefAssignmentDTO;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class UpdateInterviewDTO {
 
-    @NotNull(message = "Must specify the interviewer")
-    private RefInterviewerDTO interviewer;
+    @NotNull(message = "Must specify the assignment")
+    private RefAssignmentDTO assignment;
 
 }

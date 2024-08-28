@@ -25,7 +25,6 @@ public class DistrictService {
         this.regionRepository = regionRepository;
     }
 
-
     public Page<District> findAll(String searchTex, Pageable pageable) {
 
         // Construct Page object
@@ -37,8 +36,15 @@ public class DistrictService {
 
     }
 
-    public Page<District> findAllByRegion(String regionId, Pageable pageable) {
-        return repository.findAllByRegionId(regionId, pageable);
+    public Page<District> findAllByRegionId(String regionId,String searchTex, Pageable pageable) {
+
+        // Construct Page object
+        List<CountResult> countResults = repository.countAllByRegionId(regionId,searchTex);
+
+        List<District> contents = repository.findAllByRegionId(regionId,searchTex, pageable).getContent();
+
+        return new PageImpl<>(contents, pageable, !countResults.isEmpty() ? countResults.get(0).getCount() : 0);
+
     }
 
 

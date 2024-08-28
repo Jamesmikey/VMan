@@ -15,16 +15,30 @@ import java.util.List;
 public interface WardRepository extends MongoRepository<Ward, String> {
 
     @Aggregation(pipeline = {
+            "{$match: {'name': {'$regex':?1,'$options' : 'i'},'district': ObjectId(?0)}}",
+    })
+    Slice<Ward> findAllByDistrictId(String districtId,String name,Pageable pageable);
+
+
+    @Aggregation(pipeline = {
+            "{$match: {'name': {'$regex':?1,'$options' : 'i'},'district': ObjectId(?0)}}",
+            "{$count: 'count'}"
+    })
+    List<CountResult> countAllByDistrictId(String districtId,String name);
+
+
+    @Aggregation(pipeline = {
             "{$match: {'name': {'$regex':?0,'$options' : 'i'}}}",
     })
-    Slice<Ward> findAll(String name, Pageable pageable);
+    Slice<Ward> findAll(String name,Pageable pageable);
 
-    Page<Ward> findAllByDistrictId(String districtId,Pageable pageable);
+
 
     @Aggregation(pipeline = {
             "{$match: {'name': {'$regex':?0,'$options' : 'i'}}}",
             "{$count: 'count'}"
     })
     List<CountResult> countAll(String name);
+
 
 }

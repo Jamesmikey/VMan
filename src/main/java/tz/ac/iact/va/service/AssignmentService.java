@@ -8,56 +8,56 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import tz.ac.iact.va.exception.DataNotFoundException;
 import tz.ac.iact.va.exception.InvalidDataException;
-import tz.ac.iact.va.model.Interviewer;
+import tz.ac.iact.va.model.Assignment;
 import tz.ac.iact.va.model.User;
 import tz.ac.iact.va.model.Ward;
-import tz.ac.iact.va.repository.InterviewerRepository;
+import tz.ac.iact.va.repository.AssignmentRepository;
 import tz.ac.iact.va.repository.UserRepository;
 import tz.ac.iact.va.repository.WardRepository;
 
 @Service
-public class InterviewerService {
+public class AssignmentService {
 
-    private final InterviewerRepository repository;
+    private final AssignmentRepository repository;
 
     private final UserRepository userRepository;
 
     private final WardRepository wardRepository;
 
-    public InterviewerService(InterviewerRepository repository, UserRepository userRepository, WardRepository wardRepository) {
+    public AssignmentService(AssignmentRepository repository, UserRepository userRepository, WardRepository wardRepository) {
         this.repository = repository;
         this.userRepository = userRepository;
         this.wardRepository = wardRepository;
     }
 
 
-    public Page<Interviewer> findAll(Pageable pageable) {
+    public Page<Assignment> findAll(Pageable pageable) {
 
        return repository.findAll(pageable);
 
     }
 
 
-    public Interviewer findById(String id) {
+    public Assignment findById(String id) {
         return repository.findById(id).orElseThrow(() -> new DataNotFoundException("Interviewer not found"));
     }
 
-    public Interviewer create(Interviewer interviewer) {
+    public Assignment create(Assignment assignment) {
 
 
         //Check if user provided exists
-        User user = userRepository.findById(interviewer.getUser().getId()).orElseThrow(() -> new DataNotFoundException("User not found"));
-        interviewer.setUser(user);
+        User user = userRepository.findById(assignment.getUser().getId()).orElseThrow(() -> new DataNotFoundException("User not found"));
+        assignment.setUser(user);
 
 
         //Check if ward provided exists
-        Ward ward = wardRepository.findById(interviewer.getWard().getId()).orElseThrow(() -> new DataNotFoundException("Ward not found"));
-        interviewer.setWard(ward);
+        Ward ward = wardRepository.findById(assignment.getWard().getId()).orElseThrow(() -> new DataNotFoundException("Ward not found"));
+        assignment.setWard(ward);
 
 
         //Set created by
         User createdBy = userRepository.findById(getCurrentPrincipal().getUsername()).orElseThrow(() -> new DataNotFoundException("User not found"));
-        interviewer.setCreatedBy(createdBy);
+        assignment.setCreatedBy(createdBy);
 
 
         if(repository.existsByUserIdAndWardId(user.getId(),ward.getId())){
@@ -65,33 +65,33 @@ public class InterviewerService {
         }
 
         //Create composite ID
-        interviewer.setId(user.getId()+"-"+ward.getId());
+        assignment.setId(user.getId()+"-"+ward.getId());
 
-        return repository.save(interviewer);
+        return repository.save(assignment);
 
     }
 
-    public Interviewer update(String id, Interviewer updatedInterviewer) {
+    public Assignment update(String id, Assignment updatedAssignment) {
 
         //Find the Interviewer with the given ID
-        Interviewer interviewer = repository.findById(id).orElseThrow(() -> new DataNotFoundException("Interviewer not found"));
+        Assignment assignment = repository.findById(id).orElseThrow(() -> new DataNotFoundException("Interviewer not found"));
 
         //Check if ward provided exists
-        Ward ward = wardRepository.findById(updatedInterviewer.getUser().getId()).orElseThrow(() -> new DataNotFoundException("Ward not found"));
-        interviewer.setWard(ward);
+        Ward ward = wardRepository.findById(updatedAssignment.getUser().getId()).orElseThrow(() -> new DataNotFoundException("Ward not found"));
+        assignment.setWard(ward);
 
 
-        return repository.save(interviewer);
+        return repository.save(assignment);
     }
 
 
     public void delete(String id) {
 
 //        Find the Interviewer with the given ID
-        Interviewer interviewer = repository.findById(id).orElseThrow(() -> new DataNotFoundException("Interviewer not found"));
+        Assignment assignment = repository.findById(id).orElseThrow(() -> new DataNotFoundException("Interviewer not found"));
 
 //        Delete the Interviewer by given id
-        repository.delete(interviewer);
+        repository.delete(assignment);
     }
 
 

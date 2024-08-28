@@ -19,6 +19,8 @@ public class ListUserDTO {
 
     private String phoneNumber;
 
+    private String fullName;
+
     private String sex;
 
     private String email;

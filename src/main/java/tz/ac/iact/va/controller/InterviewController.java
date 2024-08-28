@@ -21,7 +21,7 @@ import tz.ac.iact.va.service.InterviewService;
 
 
 @Tag(name = "Interviews", description = "Manage Interviews")
-@RequestMapping("/api/v1/interviews")
+@RequestMapping("/api/v1")
 @RestController
 @SecurityRequirement(name = "Bearer Authentication")
 public class InterviewController {
@@ -36,7 +36,7 @@ public class InterviewController {
     }
 
 
-    @GetMapping
+    @GetMapping("/interviews")
     @Operation(summary = "Get all interviews", description = "")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Interviews fetched successfully"),
@@ -48,18 +48,42 @@ public class InterviewController {
     }
 
 
-    @GetMapping("/my/all")
+    @GetMapping("/interviews/my/all")
     @Operation(summary = "Get my all interviews", description = "")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Interviews fetched successfully"),
     })
-    public Slice<ListInterviewDTO> findMyAll(@RequestParam String wardId, @Parameter(hidden = true) Pageable pageable) {
+    public Page<ListInterviewDTO> findMyAll(@Parameter(hidden = true) Pageable pageable) {
 
-        return service.findMyAll(wardId,pageable).map(interview -> modelMapper.map(interview, ListInterviewDTO.class));
+        return service.findMyAll(pageable).map(interview -> modelMapper.map(interview, ListInterviewDTO.class));
 
     }
 
-    @GetMapping("/{id}")
+
+    @GetMapping("/wards/{wardId}/interviews/my/all")
+    @Operation(summary = "Get my all interviews by ward ID", description = "")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Interviews fetched successfully"),
+    })
+    public Page<ListInterviewDTO> findMyAllByWardId(@PathVariable String wardId, @Parameter(hidden = true) Pageable pageable) {
+
+        return service.findMyAllByWardId(wardId,pageable).map(interview -> modelMapper.map(interview, ListInterviewDTO.class));
+
+    }
+
+
+    @GetMapping("/users/{userId}/interviews")
+    @Operation(summary = "Get my all interviews by user ID", description = "")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Interviews fetched successfully"),
+    })
+    public Page<ListInterviewDTO> findMyAllByUserId(@PathVariable String userId, @Parameter(hidden = true) Pageable pageable) {
+
+        return service.findAllByUserId(userId,pageable).map(interview -> modelMapper.map(interview, ListInterviewDTO.class));
+
+    }
+
+    @GetMapping("/interviews/{id}")
     @Operation(summary = "Get Interview by ID", description = "")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Interview fetched successfully"),
@@ -70,7 +94,7 @@ public class InterviewController {
 
 
 
-    @PostMapping
+    @PostMapping("/interviews")
     @Operation(summary = "Create new interview", description = "")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Interview created successfully"),
@@ -85,7 +109,7 @@ public class InterviewController {
     }
 
 
-    @PutMapping("/{id}")
+    @PutMapping("/interviews/{id}")
     @Operation(summary = "Edit interview by id", description = "")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Interview updated successfully"),
@@ -100,7 +124,7 @@ public class InterviewController {
         return new MessageDTO(true, "Interview updated successfully");
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/interviews/{id}")
     @Operation(summary = "Delete interview by id", description = "")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Interview deleted successfully")

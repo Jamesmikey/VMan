@@ -15,9 +15,9 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(collection = "interviewers")
-@TypeAlias("interviewer")
-public class Interviewer {
+@Document(collection = "assignments")
+@TypeAlias("assignment")
+public class Assignment {
   @Id
   private String id;
 
@@ -27,7 +27,7 @@ public class Interviewer {
   @DocumentReference(lazy = true)
   private User user;
 
-  @DocumentReference(lazy = true, lookup = "{ 'interviewer' : ?#{#self._id} }")
+  @DocumentReference(lazy = true, lookup = "{ 'assignment' : ?#{#self._id} }")
   @ReadOnlyProperty
   List<Interview> interviews;
 

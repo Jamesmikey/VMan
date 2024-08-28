@@ -7,7 +7,9 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.annotations.servers.Server;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.mongodb.config.EnableMongoAuditing;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @OpenAPIDefinition(info = @Info(title = "VMAN", version = "1.0", description = "Verbal Autopsy Manager API"),
 		servers = {
@@ -25,6 +27,8 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 //@EnableScheduling
 //@EnableAsync
 //@EnableConfigurationProperties()
+@EnableTransactionManagement
+@EnableMongoAuditing
 public class VaApplication {
 
 	public static void main(String[] args) {

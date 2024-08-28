@@ -11,6 +11,7 @@ import tz.ac.iact.va.enums.Sex;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Builder
@@ -36,6 +37,10 @@ public class Notification {
 
     @DocumentReference(lazy = true)
     private User reportedBy;
+
+    @ReadOnlyProperty
+    @DocumentReference(lookup="{'notification':?#{#self._id} }",lazy = true)
+    private Interview interview;
 
     @CreatedDate
     private LocalDateTime createdAt;

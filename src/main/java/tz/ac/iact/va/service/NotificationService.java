@@ -1,5 +1,7 @@
 package tz.ac.iact.va.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,16 +21,26 @@ public class NotificationService {
 
     private final InterviewRepository interviewRepository;
 
-    private final InterviewerRepository interviewerRepository;
+    private final AssignmentRepository assignmentRepository;
 
     private final WardRepository wardRepository;
 
-    public NotificationService(NotificationRepository repository, UserRepository userRepository, InterviewRepository interviewRepository, InterviewerRepository interviewerRepository, WardRepository wardRepository) {
+    public NotificationService(NotificationRepository repository, UserRepository userRepository, InterviewRepository interviewRepository, AssignmentRepository assignmentRepository, WardRepository wardRepository) {
         this.repository = repository;
         this.userRepository = userRepository;
         this.interviewRepository = interviewRepository;
-        this.interviewerRepository = interviewerRepository;
+        this.assignmentRepository = assignmentRepository;
         this.wardRepository = wardRepository;
+    }
+
+
+    public Page<Notification> findAll(Pageable pageable){
+        return repository.findAll(pageable);
+    }
+
+
+    public Notification findById(String id){
+        return repository.findById(id).orElseThrow(() -> new DataNotFoundException("Notification not found"));
     }
 
 
@@ -49,12 +61,12 @@ public class NotificationService {
         Notification savedNotification=repository.save(notification);
 
         //Search interviewer to create interview if no interview found save it anyway
-        Interviewer interviewer=interviewerRepository.findByWardId(ward.getId()).orElse(null);
+        Assignment assignment = assignmentRepository.findByWardId(ward.getId()).orElse(null);
 
         //Build interview if there is interviewer in this ward
-        if(interviewer!=null) {
+        if(assignment !=null) {
 
-            Interview interview = Interview.builder().interviewer(interviewer)
+            Interview interview = Interview.builder().assignment(assignment)
                     .status(InterviewStatus.Scheduled)
                     .notification(savedNotification)
                     .build();

@@ -39,8 +39,14 @@ public class WardService {
 
     }
 
-    public Page<Ward> findAllByDistrict(String districtId, Pageable pageable) {
-        return repository.findAllByDistrictId(districtId, pageable);
+    public Page<Ward> findAllByDistrict(String districtId,String searchText, Pageable pageable) {
+        // Construct Page object
+        List<CountResult> countResults = repository.countAllByDistrictId(districtId,searchText);
+
+        List<Ward> contents=repository.findAllByDistrictId(districtId,searchText, pageable).getContent();
+
+        return new PageImpl<>(contents, pageable, !countResults.isEmpty() ? countResults.get(0).getCount() : 0);
+
     }
 
 

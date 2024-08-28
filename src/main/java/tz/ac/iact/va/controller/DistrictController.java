@@ -22,7 +22,7 @@ import tz.ac.iact.va.service.WardService;
 
 
 @Tag(name = "Districts", description = "Manage Districts")
-@RequestMapping("/api/v1/regions/{regionId}")
+@RequestMapping("/api/v1/districts")
 @RestController
 @SecurityRequirement(name = "Bearer Authentication")
 public class DistrictController {
@@ -67,9 +67,9 @@ public class DistrictController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Wards fetched successfully"),
     })
-    public Page<ListWardDTO> findAllWardsByDistrict(@PathVariable String id, @Parameter(hidden = true) Pageable pageable, @PathVariable String regionId) {
+    public Page<ListWardDTO> findAllWardsByDistrict(@PathVariable String id,@RequestParam(required = false,defaultValue = "") String searchText, @Parameter(hidden = true) Pageable pageable) {
 
-        return wardService.findAllByDistrict(id,pageable).map(district -> modelMapper.map(district, ListWardDTO.class));
+        return wardService.findAllByDistrict(id,searchText,pageable).map(district -> modelMapper.map(district, ListWardDTO.class));
 
     }
 
@@ -79,7 +79,7 @@ public class DistrictController {
             @ApiResponse(responseCode = "200", description = "District created successfully"),
             @ApiResponse(responseCode = "400", description = "District fields are not filled in correctly")
     })
-    public CreatedDistrictDTO create(@RequestBody @Valid CreateDistrictDTO createDistrictDTO, @PathVariable String regionId) {
+    public CreatedDistrictDTO create(@RequestBody @Valid CreateDistrictDTO createDistrictDTO) {
 
         District district = modelMapper.map(createDistrictDTO, District.class);
 

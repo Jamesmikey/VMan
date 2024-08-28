@@ -12,4 +12,5 @@ public class DetailRegionDTO {
     private String id;
 
     private String name;
+
 }

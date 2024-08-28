@@ -7,8 +7,15 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import tz.ac.iact.va.model.Interview;
 import tz.ac.iact.va.model.VAReport;
 
+import java.util.Optional;
+
 public interface VAReportRepository extends MongoRepository<VAReport, String> {
 
-    Page<VAReport> findAllByIdAndInterviewerId(String id,String interviewerId, Pageable pageable);
+
+    Optional<VAReport> findByInterviewIdAndId(String interviewId, String id);
+
+
+
+    void deleteByInterviewIdAndId(String interviewId, String id);
 
 }

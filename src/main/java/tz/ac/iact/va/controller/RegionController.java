@@ -65,9 +65,9 @@ public class RegionController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Districts fetched successfully"),
     })
-    public Page<ListDistrictDTO> findAllWardsByRegion(@PathVariable String id, @Parameter(hidden = true) Pageable pageable) {
+    public Page<ListDistrictDTO> findAllWardsByRegion(@PathVariable String id,@RequestParam(required = false,defaultValue = "") String searchText, @Parameter(hidden = true) Pageable pageable) {
 
-        return districtService.findAllByRegion(id,pageable).map(district -> modelMapper.map(district, ListDistrictDTO.class));
+        return districtService.findAllByRegionId(id,searchText,pageable).map(district -> modelMapper.map(district, ListDistrictDTO.class));
 
     }
 

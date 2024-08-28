@@ -1,30 +1,27 @@
 package tz.ac.iact.va.service;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import tz.ac.iact.va.enums.InterviewStatus;
 import tz.ac.iact.va.exception.DataNotFoundException;
-import tz.ac.iact.va.model.Interview;
-import tz.ac.iact.va.model.Interviewer;
-import tz.ac.iact.va.model.Notification;
-import tz.ac.iact.va.model.User;
+import tz.ac.iact.va.model.*;
 import tz.ac.iact.va.repository.InterviewRepository;
-import tz.ac.iact.va.repository.InterviewerRepository;
+import tz.ac.iact.va.repository.AssignmentRepository;
 import tz.ac.iact.va.repository.NotificationRepository;
 import tz.ac.iact.va.repository.UserRepository;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class InterviewService {
 
     private final InterviewRepository repository;
 
-    private final InterviewerRepository interviewerRepository;
+    private final AssignmentRepository assignmentRepository;
 
     private final NotificationRepository notificationRepository;
 
@@ -32,9 +29,9 @@ public class InterviewService {
 
     private final UserRepository userRepository;
 
-    public InterviewService(InterviewRepository repository, InterviewerRepository interviewerRepository, NotificationRepository notificationRepository, UserDetailServiceImp userService, UserRepository userRepository) {
+    public InterviewService(InterviewRepository repository, AssignmentRepository assignmentRepository, NotificationRepository notificationRepository, UserDetailServiceImp userService, UserRepository userRepository) {
         this.repository = repository;
-        this.interviewerRepository = interviewerRepository;
+        this.assignmentRepository = assignmentRepository;
         this.notificationRepository = notificationRepository;
         this.userService = userService;
         this.userRepository = userRepository;
@@ -46,16 +43,46 @@ public class InterviewService {
     }
 
 
-    public Slice<Interview> findMyAll(String wardId,Pageable pageable) {
+    public Page<Interview> findMyAll(Pageable pageable) {
 
 
         User user=userRepository.findByEmail(userService.getCurrentUser().getUsername()).orElseThrow(() -> new DataNotFoundException("User not found"));
 
-        // Get the interviewer associated with the logged-in user
-        Interviewer interviewer=interviewerRepository.findByUserIdAndWardId(user.getId(),wardId).orElseThrow(() -> new DataNotFoundException("Not interviewer details associate with your account and given ward"));
+        // Construct Page object
+        List<CountResult> countResults = repository.countAllByUserId(user.getId());
 
-        //Find the interview by user id
-        return repository.findAllByInterviewerId(interviewer.getId(),pageable);
+        List<Interview> contents = repository.findAllByUserId(user.getId(), pageable).getContent();
+
+        return new PageImpl<>(contents, pageable, !countResults.isEmpty() ? countResults.get(0).getCount() : 0);
+
+    }
+
+
+    public Page<Interview> findMyAllByWardId(String wardId,Pageable pageable) {
+
+
+        User user=userRepository.findByEmail(userService.getCurrentUser().getUsername()).orElseThrow(() -> new DataNotFoundException("User not found"));
+
+        // Construct Page object
+        List<CountResult> countResults = repository.countAllByUserIdAndWardId(user.getId(),wardId);
+
+        List<Interview> contents = repository.findAllByUserIdAndWardId(user.getId(),wardId, pageable).getContent();
+
+        return new PageImpl<>(contents, pageable, !countResults.isEmpty() ? countResults.get(0).getCount() : 0);
+
+    }
+
+
+    public Page<Interview> findAllByUserId(String userId,Pageable pageable) {
+
+
+        // Construct Page object
+        List<CountResult> countResults = repository.countAllByUserId(userId);
+
+        List<Interview> contents = repository.findAllByUserId(userId, pageable).getContent();
+
+        return new PageImpl<>(contents, pageable, !countResults.isEmpty() ? countResults.get(0).getCount() : 0);
+
 
     }
 
@@ -65,14 +92,16 @@ public class InterviewService {
     }
 
 
+
+
     public Interview create(Interview interview) {
 
         //Check if interviewer exists
-        Interviewer interviewer = interviewerRepository.findById(interview.getInterviewer().getId()).orElseThrow(() -> new DataNotFoundException("Interviewer not found"));
-        interview.setInterviewer(interviewer);
+        Assignment assignment = assignmentRepository.findById(interview.getAssignment().getId()).orElseThrow(() -> new DataNotFoundException("Interviewer not found"));
+        interview.setAssignment(assignment);
 
         //Check if notification exists
-        Notification notification = notificationRepository.findById(interview.getInterviewer().getId()).orElseThrow(() -> new DataNotFoundException("Notification not found"));
+        Notification notification = notificationRepository.findById(interview.getAssignment().getId()).orElseThrow(() -> new DataNotFoundException("Notification not found"));
         interview.setNotification(notification);
 
         interview.setStatus(InterviewStatus.Scheduled);
@@ -87,8 +116,8 @@ public class InterviewService {
         Interview interview = repository.findById(id).orElseThrow(() -> new DataNotFoundException("Interview not found"));
 
         //Check if interviewer exists
-        Interviewer interviewer = interviewerRepository.findById(updatedInterview.getInterviewer().getId()).orElseThrow(() -> new DataNotFoundException("Interviewer not found"));
-        interview.setInterviewer(interviewer);
+        Assignment assignment = assignmentRepository.findById(updatedInterview.getAssignment().getId()).orElseThrow(() -> new DataNotFoundException("Interviewer not found"));
+        interview.setAssignment(assignment);
 
         interview.setStatus(updatedInterview.getStatus());
 

@@ -23,10 +23,14 @@ public class Interview {
   private String id;
 
   @DocumentReference(lazy = true)
-  private Interviewer interviewer;
+  private Assignment assignment;
 
   @DocumentReference(lazy = true)
   private Notification notification;
+
+  @ReadOnlyProperty
+  @DocumentReference(lookup="{'interview':?#{#self._id} }",lazy = true)
+  private VAReport vaReport;
 
   private InterviewStatus status;
 
