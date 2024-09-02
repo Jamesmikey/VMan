@@ -3,6 +3,10 @@ package tz.ac.iact.va.dto.user;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import tz.ac.iact.va.dto.role.DetailRoleDTO;
+import tz.ac.iact.va.model.Role;
+
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -21,7 +25,7 @@ public class DetailUserDTO {
 
     private String fullName;
 
-    private String sex;
+    private Set<DetailRoleDTO> roles;
 
     private String email;
 

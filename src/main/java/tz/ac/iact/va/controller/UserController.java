@@ -15,12 +15,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import tz.ac.iact.va.dto.role.RefRoleDTO;
 import tz.ac.iact.va.dto.user.*;
 import tz.ac.iact.va.exception.DataNotFoundException;
+import tz.ac.iact.va.model.Role;
 import tz.ac.iact.va.model.User;
 import tz.ac.iact.va.service.UserService;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Tag(name = "Users", description = "Manage Users")
 @RestController
@@ -76,8 +79,11 @@ public class UserController {
     @PostMapping("/{id}/change-roles")
     @Operation(summary = "Change user roles by id",description = "")
 //    @PreAuthorize("hasAnyRole('SUPER-ADMIN')")
-    public DetailUserDTO changeRoles(@PathVariable String id,@RequestBody Set<String> roles) throws DataNotFoundException {
-        return modelMapper.map(service.updateRoles(id,roles),DetailUserDTO.class);
+    public ResponseEntity<?> changeRoles(@PathVariable String id,@RequestBody Set<RefRoleDTO> roles) throws DataNotFoundException {
+         service.updateRoles(id,roles.stream().map(refRoleDTO -> modelMapper.map(refRoleDTO, Role.class)).collect(Collectors.toSet()));
+
+        return ResponseEntity.ok(new MessageResponse(true,"User roles updated successfully!"));
+
     }
 
     @PostMapping
@@ -89,7 +95,7 @@ public class UserController {
         //Convert this to User object
         User user = modelMapper.map(newUserDto, User.class);
 
-        service.save(user);
+        service.create(user);
 
         return ResponseEntity.ok(new MessageResponse(true,"User registered successfully!"));
 

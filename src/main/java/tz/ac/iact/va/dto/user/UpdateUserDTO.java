@@ -5,6 +5,10 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import tz.ac.iact.va.dto.role.RefRoleDTO;
+import tz.ac.iact.va.model.Role;
+
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -24,8 +28,5 @@ public class UpdateUserDTO {
     @NotEmpty(message = "Must provide phone number")
     private String phoneNumber;
 
-
-    @NotEmpty(message = "Must provide sex")
-    private String sex;
 
 }

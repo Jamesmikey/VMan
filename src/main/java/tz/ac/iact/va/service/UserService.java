@@ -6,7 +6,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tz.ac.iact.va.exception.DataNotFoundException;
+import tz.ac.iact.va.exception.DuplicateDataException;
+import tz.ac.iact.va.model.Role;
 import tz.ac.iact.va.model.User;
+import tz.ac.iact.va.repository.RoleRepository;
 import tz.ac.iact.va.repository.UserRepository;
 
 import java.util.NoSuchElementException;
@@ -24,11 +27,14 @@ public class UserService {
 
     private final UserDetailServiceImp userDetailServiceImp;
 
+    private final RoleRepository roleRepository;
+
     final PasswordEncoder encoder;
 
-    public UserService(UserRepository repository, UserDetailServiceImp userDetailServiceImp, PasswordEncoder encoder) {
+    public UserService(UserRepository repository, UserDetailServiceImp userDetailServiceImp, RoleRepository roleRepository, PasswordEncoder encoder) {
         this.repository = repository;
         this.userDetailServiceImp = userDetailServiceImp;
+        this.roleRepository = roleRepository;
         this.encoder = encoder;
     }
 
@@ -65,74 +71,23 @@ public class UserService {
 
 
     @Transactional
-    public User register(User user) {
-//
-//        //Check if email already taken
-//        if (repository.existsByUsername(user.getEmail())){
-//            throw new DuplicateDataException("Username is already in use!");
-//        }
-//
-//        user.setId(user.getEmail());
-//
-//        user.setUsername(user.getEmail());
-//
-//        // Create new user's account
-//        user.setPassword(encoder.encode(user.getPassword()));
-//
-//        user.getRoles().add("ROLE_USER");
-//
-//        //Generate verification code
-//        String randomCode = RandomString.make(64);
-//        user.setVerificationCode(randomCode);
-//        user.setEmailVerified(false);
-//
-//        User savedUser=repository.save(user);
-//
-//        //Send verification email
-//        String url = properties.getBaseUrl() + "/auth/verify/email/" + user.getVerificationCode();
-//        Context context = new Context();
-//        context.setVariable("name",user.getFirstName());
-//        context.setVariable("url",url);
-//        String htmlContent = templateEngine.process("emails/templates/verify",context);
-//
-//        Email email=new Email();
-//        email.setRecipients(new String[]{savedUser.getEmail()});
-//        email.setSubject("Verify your email");
-//        email.setMsgBody(htmlContent);
-//        emailService.send(email,true);
+    public User create(User user) {
 
-        return null;
-    }
+        //Check if email already taken
+        if (repository.existsById(user.getEmail())){
+            throw new DuplicateDataException("Username is already in use!");
+        }
 
+        user.setId(user.getEmail());
 
-    public User save(User user) {
+        // Create new user's account
+        user.setPassword(encoder.encode(user.getPassword()));
 
-//        //Check if email already taken
-//        if (repository.existsByUsername(user.getEmail())){
-//            throw new DuplicateDataException("Username is already in use!");
-//        }
-//
-//        user.setId(user.getEmail());
-//
-//        user.setUsername(user.getEmail());
-//
-//        // Create new user's account
-//        user.setPassword(encoder.encode(user.getPassword()));
-//
-//        user.getRoles().add("ROLE_USER");
-//
-//        //Generate verification code
-//        String randomCode = RandomString.make(64);
-//        user.setVerificationCode(randomCode);
-//        user.setEmailVerified(true);
-//
-//        User savedUser=repository.save(user);
-////        User savedUser=user;
-//
-//
-//        return savedUser;
+        //Set role of the user
+        user.getRoles().add(Role.builder().name("USER").id("USER").build());
 
-        return null;
+        return  repository.save(user);
+
     }
 
 
@@ -247,21 +202,20 @@ public class UserService {
 
     }
 
-    public User updateRoles(String username, Set<String> roles) throws DataNotFoundException {
+    public User updateRoles(String username, Set<Role> roles) throws DataNotFoundException {
 
-//        User user= repository.findByUsername(username).orElseThrow(() -> new NotFoundException("User not found"));
-//
-//
-//        if(!roles.contains("ROLE_USER")){
-//            roles.add("ROLE_USER");
-//        }
-//
-//        user.setRoles(roles);
-//
-//        repository.save(user);
-//
-//        return user;
-        return null;
+        User user= repository.findById(username).orElseThrow(() -> new DataNotFoundException("User not found"));
+
+        user.getRoles().clear();
+
+        //Check if roles exists in the database
+        for(Role role:roles){
+            user.getRoles().add(roleRepository.findById(role.getId()).orElseThrow(() -> new DataNotFoundException("Role not found")));
+        }
+
+        repository.save(user);
+
+        return user;
 
     }
 
